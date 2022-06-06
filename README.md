@@ -287,4 +287,4 @@ ansible-playbook metricbeat.yml
 
 To verify success, wait five minutes to give ELK time to start up. 
 
-Then, via browser access Kibana on [http://elk server IP:5601/app/kibana#/home] This is the address of Kibana. Navigate via Discover icon, if the installation succeeded, filebeat logs, and metricbeat metrics will be availble on the screen.
+Then, via browser access Kibana on [http://elk server IP:5601/app/kibana#/home] This is the address of Kibana. Navigate via Discover icon, if the installation succeeded, filebeat logs, and metricbeat metrics will be available on the screen.
