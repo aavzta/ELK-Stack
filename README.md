@@ -240,50 +240,51 @@ In order to use the playbooks, you will need to have an Ansible control node alr
 
 To use the playbooks, we must perform the following steps:
 - Copy the playbooks to the Ansible Control Node
-- Run each playbook on the appropriate targets
-
-The easiest way to copy the playbooks is to use Git:
-
+- Update the ansible host file located /etc/ansible/hosts
 ```bash
-$ cd /etc/ansible
-$ mkdir files
-# Clone Repository + IaC Files
-$ git clone https://github.com/yourusername/project-1.git
-# Move Playbooks and hosts file Into `/etc/ansible`
-$ cp project-1/playbooks/* .
-$ cp project-1/files/* ./files
-```
+# This is the default ansible 'hosts' file.
+#
+# It should live in /etc/ansible/hosts
+#
+#   - Comments begin with the '#' character
+#   - Blank lines are ignored
+#   - Groups of hosts are delimited by [header] elements
+#   - You can enter hostnames or ip addresses
+#   - A hostname/IP can be a member of multiple groups
+# You need only a [webservers] and [elkservers] group.
 
-This copies the playbook files to the correct place.
-
-Next, you must create a `hosts` file to specify which VMs to run each playbook on. Run the commands below:
-
-```bash
-$ cd /etc/ansible
-$ cat > hosts <<EOF
+# List the IP Addresses of your webservers
+# You should have at least 2 IP addresses
 [webservers]
-10.0.0.5
-10.0.0.6
+10.0.0.4 ansible_python_interpreter=/usr/bin/python3
+10.0.0.5 ansible_python_interpreter=/usr/bin/python3
+10.0.0.6 ansible_python_interpreter=/usr/bin/python3
 
+# List the IP address of your ELK server
+# There should only be one IP address
 [elk]
-10.0.0.8
-EOF
+10.1.0.4 ansible_python_interpreter=/usr/bin/python3
 ```
 
-After this, the commands below run the playbook:
+- Update the ansible configuration file located /etc/ansible/ansible.cfg and set remote user to sys admin (azadmin) of the web servers.
 
- ```bash
- $ cd /etc/ansible
- $ ansible-playbook install_elk.yml elk
- $ ansible-playbook install_filebeat.yml webservers
- $ ansible-playbook install_metricbeat.yml webservers
- ```
+- Run each playbook on the appropriate targets, with the following steps:
+```bash
+#ssh the jumpbox via terminal
+ssh azadmin@[Jumpbox public IP]
+
+#start the ansible container
+sudo docker start [ansible container name]
+sudo docker attach [ansible container name]
+
+#run ansible playbooks
+ansible-playbook install-elk.yml
+ansible-playbook filebeat-playbook.yml
+ansible-playbook metricbeat.yml
+
+```
+
 
 To verify success, wait five minutes to give ELK time to start up. 
 
-Then, run: `curl http://10.0.0.8:5601`. This is the address of Kibana. If the installation succeeded, this command should print HTML to the console.
-
-
----
-
-© 2020 Trilogy Education Services, a 2U, Inc. brand. All Rights Reserved.  
+Then, via browser access Kibana on [http://elk server IP:5601/app/kibana#/home] This is the address of Kibana. Navigate via Discover icon, if the installation succeeded, filebeat logs, and metricbeat metrics will be availble on the screen.
