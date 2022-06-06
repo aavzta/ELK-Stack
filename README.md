@@ -52,8 +52,8 @@ A summary of the access policies in place can be found in the table below.
 |----------|----------------------------|----------------------|
 | Jump Box | Yes (SSH 22)               | 180.xxx.xx.xx        |
 | ELK      | Yes (HTTP 5601)            | 180.xxx.xx.xx        |
-| Web-1    | No  (SSH 22)               | 10.0.0.1-254         |
-| Web-2    | No  (SSH 22)               | 10.0.0.1-254         |
+| Web-1    | No  (SSH 22)               | 180.xxx.xx.xx        |
+| Web-2    | No  (SSH 22)               | 180.xxx.xx.xx        |
 
 ### Elk Configuration
 
@@ -86,22 +86,16 @@ The following playbooks are used in build & deployment:
 
 The following screenshot displays the result of running `docker ps` after successfully configuring the ELK instance.
 
-- _TODO_: Update the image file path with the name of your screenshot of docker ps output:
-
-  ![STUDENT TODO: Update image file path](Images/docker_ps_output.png)
-
-
-
+  ![] https://github.com/aavzta/ELK-Stack/blob/main/Screen%20Shot%202022-05-27%20at%201.13.25%20pm.png
+  
 The playbook is duplicated below.
-
-# install_elk.yml
-
+```yaml
+---
 - name: Configure Elk VM with Docker
   hosts: elk
   remote_user: azadmin
   become: true
   tasks:
-  
     # Use apt module
     - name: Install docker.io
       apt:
@@ -148,20 +142,58 @@ The playbook is duplicated below.
         name: docker
         enabled: yes
 
+
+```
+
 ### Target Machines & Beats
-This ELK server is configured to monitor the DVWA 1 and DVWA 2 VMs, at `10.0.0.5` and `10.0.0.6`, respectively.
+This ELK server is configured to monitor the Web-1 and Web-2 VMs, at `10.0.0.5` and `10.0.0.6`, respectively.
 
 We have installed the following Beats on these machines:
 - Filebeat
 - Metricbeat
-- Packetbeat
 
 These Beats allow us to collect the following information from each machine:
 - **Filebeat**: Filebeat detects changes to the filesystem. Specifically, we use it to collect Apache logs.
 - **Metricbeat**: Metricbeat detects changes in system metrics, such as CPU usage. We use it to detect SSH login attempts, failed `sudo` escalations, and CPU/RAM statistics.
 
+```yaml
+---
+- name: Installing and Launch Filebeat
+  hosts: webservers
+  become: yes
+  tasks:
+    # Use command module
+  - name: Download filebeat .deb file
+    command: curl -L -O https://artifacts.elastic.co/downloads/beats/filebeat/filebeat-7.4.0-amd64.deb
 
-The playbook below installs Metricbeat on the target hosts. The playbook for installing Filebeat is not included, but looks essentially identical — simply replace `metricbeat` with `filebeat`, and it will work as expected.
+    # Use command module
+  - name: Install filebeat .deb
+    command: dpkg -i filebeat-7.4.0-amd64.deb
+
+    # Use copy module
+  - name: Drop in filebeat.yml
+    copy:
+      src: /etc/ansible/files/filebeat-config.yml
+      dest: /etc/filebeat/filebeat.yml
+
+    # Use command module
+  - name: Enable and Configure System Module
+    command: filebeat modules enable system
+
+    # Use command module
+  - name: Setup filebeat
+    command: filebeat setup
+
+    # Use command module
+  - name: Start filebeat service
+    command: service filebeat start
+
+    # Use systemd module
+  - name: Enable service filebeat on boot
+    systemd:
+      name: filebeat
+      enabled: yes
+```
 
 ```yaml
 ---
@@ -194,7 +226,14 @@ The playbook below installs Metricbeat on the target hosts. The playbook for ins
     # Use command module
   - name: start metric beat
     command: service metricbeat start
+
+    # Use systemd module
+  - name: Enable service metricbeat on boot
+    systemd:
+      name: metricbeat
+      enabled: yes
 ```
+
 
 ### Using the Playbooks
 In order to use the playbooks, you will need to have an Ansible control node already configured. We use the **jump box** for this purpose.
