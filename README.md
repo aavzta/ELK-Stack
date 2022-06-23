@@ -11,7 +11,7 @@ This document contains the following details:
 ### Description of the Topology
 This repository includes code defining the infrastructure below. 
 
-![]https://github.com/aavzta/ELK-Stack/blob/main/Diagram/U13%20ELK.pdf
+![This is an image](https://github.com/aavzta/ELK-Stack/blob/main/Diagram/U13%20ELK.png)
 
 The main purpose of this network is to expose a load-balanced and monitored instance of DVWA, the "D*mn Vulnerable Web Application"
 
