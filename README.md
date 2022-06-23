@@ -86,7 +86,7 @@ The following playbooks are used in build & deployment:
 
 The following screenshot displays the result of running `docker ps` after successfully configuring the ELK instance.
 
-  ![] https://github.com/aavzta/ELK-Stack/blob/main/Screen%20Shot%202022-05-27%20at%201.13.25%20pm.png
+  ![This is an image] https://github.com/aavzta/ELK-Stack/blob/main/Screen%20Shot%202022-05-27%20at%201.13.25%20pm.png
   
 The playbook is duplicated below.
 ```yaml
